@@ -14,7 +14,6 @@ function Chat() {
 
     const operatorChat = () => {
 		let randResponse = operators.responses[Math.floor(Math.random()*operators.responses.length)];
-        debugger;
 		dispatchChatEvent(randResponse, "operator");
 	}
 	const operatorAnswerChat = () => {
@@ -28,7 +27,6 @@ function Chat() {
 
 	const dispatchChatEvent = (msg, from) => {
 		let event = new CustomEvent('chatreceived', {"detail":{datetime:new Date().toISOString(), message:msg, from:from}});
-        debugger;
 		// Listen for the event
 		addListener('chatreceived', (e) => {
             if(e.chat.from === 'Visitor'){
