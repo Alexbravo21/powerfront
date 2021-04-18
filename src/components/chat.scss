@@ -1,0 +1,82 @@
+$medium: 768px;
+.chat-image{
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translate(0, -50%);
+    width: 85px;
+    max-width: 20%;
+    cursor: pointer;
+}
+.chat-window{
+    position: relative;
+    width: 100%;
+    background-color: #f0f0f0;
+    @media screen and (min-width: $medium) {
+        position: fixed;
+        bottom: 0;
+        right: 5%;
+        width: 375px;
+        height: 600px;
+    }
+    .chat-title{
+        background-color: #1bb9da;
+        padding: 5px;
+        text-align: center;
+        color: #ffffff;
+    }
+    #chatHolder {
+        overflow: hidden;
+        padding: 0 15px;
+        #chatHistory {
+            height: 150px;
+            overflow: auto;
+            background-color: #ffffff;
+            width: 90%;
+            margin: 15px auto 35px;
+            border-radius: 15px;
+            padding: 5px 15px;
+            -ms-overflow-style: none;  
+            scrollbar-width: none;
+            &::-webkit-scrollbar {
+                display: none;
+            } 
+        }
+        
+        #liveChat {
+            height: 220px;
+            overflow: auto;
+            background-color: transparent;
+            width: 90%;
+            margin: 15px auto;
+            border-radius: 15px;
+            padding: 5px 15px;
+        }
+    }
+    #chatInput {
+        width: 80%;
+        height: 50px;
+        border-radius: 10px;
+        border: none;
+        margin: 0 5px 25px 15px;
+        display: inline-block;
+        vertical-align: top;
+    }
+    
+    #chatSubmit {
+        width: 10%;
+        display: inline-block;
+        vertical-align: top;
+        height: 50px;
+        text-align: center;
+        position: relative;
+        .sendImage{
+            width: 30px;
+            max-width: 90%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    }
+}

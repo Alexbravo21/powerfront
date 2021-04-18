@@ -1,30 +1,4 @@
 body, div, span, textarea {
 	font-family: Helvetica, Arial, sans-serif;
-}
-.App{
-    #chatHolder {
-        max-height: 500px;
-        width: 500px;
-        border: 1px solid #cccccc;
-        overflow: auto;
-        #chatHistory {
-            border-bottom: 1px solid #cccccc;
-            min-height: 198px;
-        }
-        
-        #liveChat {
-            width: 400px;
-            min-height: 198px;
-        }
-    }
-    #chatInput {
-        width: 428px;
-        height: 35px;
-    }
-    
-    #chatSubmit {
-        vertical-align: top;
-        height: 35px;
-        width: 70px;
-    }
+    margin: 0;
 }

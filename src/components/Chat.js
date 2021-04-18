@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { operators } from '../enums/chat-operators';
 import './chat.scss';
+import sendImage from '../img/send.png';
 
 let _events = {};
 let callbacks;
 
 function Chat() {
 
+    const [chatImage, setChatImage] = useState('https://pf-cdn.inside-graph.com/custom/67-67-pf_chattab_apng.png');
+    const [chatImageDescription, setChatImageDescription] = useState('Live chat icon, click here to open live chat panel');
     const [chats, setChats] = useState([{message: 'Loading chat history...'}]);
     const [inputMessage, setInputMessage] = useState('');
     const [newMessage, setNewMessage] = useState([]);
@@ -52,12 +55,18 @@ function Chat() {
 			}
 		}
 	}
+
+    const showChatPanel = () => {
+        console.log('clickeado');
+    }
     
     const sendChat = () => {
-		dispatchChatEvent(inputMessage, "Visitor");
-		if(inputMessage.indexOf("hello") !== -1 || inputMessage.indexOf("hi") !== -1) {
+        let inputMsg = inputMessage;
+        setInputMessage('');
+		dispatchChatEvent(inputMsg, "Visitor");
+		if(inputMsg.indexOf("hello") !== -1 || inputMsg.indexOf("hi") !== -1) {
 			setTimeout(operatorGreetingChat, 2000);
-		} else if(inputMessage.indexOf("?") !== -1) {
+		} else if(inputMsg.indexOf("?") !== -1) {
 			setTimeout(operatorAnswerChat, 2000);
 		} else {
 			setTimeout(operatorChat, 2000);
@@ -96,7 +105,12 @@ function Chat() {
 
 
     return (
+        <>
+        <img src={chatImage} alt={chatImageDescription} className="chat-image" onClick={showChatPanel} />
         <div className="chat-window">
+            <div className="chat-title">
+                <h3>Botler (In training)</h3>
+            </div>
             <div id="chatHolder">
                 <div id="chatHistory">
                     {chats.map((chatLine, i) => {
@@ -110,9 +124,12 @@ function Chat() {
                 </div>
                 
             </div>
-            <textarea id="chatInput" placeholder='Type your question here...' onChange={(event) => {setInputMessage(event.target.value)}}></textarea>
-            <input id='chatSubmit' type="button" value='SEND' onClick={sendChat}></input>
+            <textarea id="chatInput" placeholder='Type your question here...' onChange={(event) => {setInputMessage(event.target.value)}} value={inputMessage}></textarea>
+            <div id="chatSubmit">
+                <img className='sendImage' src={sendImage} onClick={sendChat} />
+            </div>
         </div>
+        </>
     )
 }
 
