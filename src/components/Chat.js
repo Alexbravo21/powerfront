@@ -31,14 +31,11 @@ function Chat() {
         debugger;
 		// Listen for the event
 		addListener('chatreceived', (e) => {
-            console.log(e);
-            console.log(e.chat);
             if(e.chat.from === 'Visitor'){
                 setNewMessage([...newMessage, inputMessage]);
             }else if(e.chat.from === 'operator'){
                 setBotMessage(e.chat.message);
             }
-            console.log('saliendo del evento')
         }, _events, false);
 
 		// Dispatch the event.
@@ -91,10 +88,6 @@ function Chat() {
     
     useEffect(() => {
         setNewMessage((oldArray) => {
-            console.log(oldArray === newMessage);
-            console.log(oldArray);
-            console.log(newMessage);
-            console.log(botMessage);
             if(oldArray === newMessage){
                return [...oldArray, botMessage];
             }else{
