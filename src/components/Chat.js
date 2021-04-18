@@ -1,16 +1,65 @@
 import { useState, useEffect } from 'react';
-import { operatorChat, dispatchChatEvent, operatorGreetingChat, operatorAnswerChat } from '../utils/chat-utils';
+import { operators } from '../enums/chat-operators';
 import './chat.scss';
+
+let _events = {};
+let callbacks;
 
 function Chat() {
 
     const [chats, setChats] = useState([{message: 'Loading chat history...'}]);
     const [inputMessage, setInputMessage] = useState('');
-    const [newmessage, setNewMessage] = useState([]);
+    const [newMessage, setNewMessage] = useState([]);
+    const [botMessage, setBotMessage] = useState('');
+
+    const operatorChat = () => {
+		let randResponse = operators.responses[Math.floor(Math.random()*operators.responses.length)];
+        debugger;
+		dispatchChatEvent(randResponse, "operator");
+	}
+	const operatorAnswerChat = () => {
+		let randResponse = operators.answers[Math.floor(Math.random()* operators.answers.length)];
+		dispatchChatEvent(randResponse, "operator");
+	}
+	const operatorGreetingChat = () => {
+		let randResponse = operators.greetings[Math.floor(Math.random()*operators.greetings.length)];
+		dispatchChatEvent(randResponse, "operator");
+	}
+
+	const dispatchChatEvent = (msg, from) => {
+		let event = new CustomEvent('chatreceived', {"detail":{datetime:new Date().toISOString(), message:msg, from:from}});
+        debugger;
+		// Listen for the event
+		addListener('chatreceived', (e) => {
+            console.log(e);
+            console.log(e.chat);
+            if(e.chat.from === 'Visitor'){
+                setNewMessage([...newMessage, inputMessage]);
+            }else if(e.chat.from === 'operator'){
+                setBotMessage(e.chat.message);
+            }
+            console.log('saliendo del evento')
+        }, _events, false);
+
+		// Dispatch the event.
+		raiseEvent("chatreceived", {"chat":{datetime:new Date().toISOString(), message:msg, from:from}}, _events);
+	}
+    const addListener = (eventName, callback, events) => {
+	 	callbacks = events[eventName] = events[eventName] || [];
+		callbacks.push(callback);
+	}
+
+	const raiseEvent = (eventName, args, events) => {
+		callbacks = events[eventName];
+		if(typeof(callbacks) != "undefined") {
+			for (var i = 0, l = callbacks.length; i < l; i++) {
+			  callbacks[i](args);
+			}
+		}
+	}
     
     const sendChat = () => {
 		dispatchChatEvent(inputMessage, "Visitor");
-        setNewMessage([...newmessage, inputMessage]);
 		if(inputMessage.indexOf("hello") !== -1 || inputMessage.indexOf("hi") !== -1) {
 			setTimeout(operatorGreetingChat, 2000);
 		} else if(inputMessage.indexOf("?") !== -1) {
@@ -39,6 +88,20 @@ function Chat() {
     useEffect(() => {
         getChatHistory();
     }, [])
+    
+    useEffect(() => {
+        setNewMessage((oldArray) => {
+            console.log(oldArray === newMessage);
+            console.log(oldArray);
+            console.log(newMessage);
+            console.log(botMessage);
+            if(oldArray === newMessage){
+               return [...oldArray, botMessage];
+            }else{
+                return [...oldArray];
+            }
+        });
+    }, [botMessage])
 
 
     return (
@@ -50,7 +113,7 @@ function Chat() {
                     })}
                 </div>
                 <div id="liveChat">
-                    {newmessage.map((liveChatLine, i) => {
+                    {newMessage.map((liveChatLine, i) => {
                         return <p key={i}> {liveChatLine} </p>
                     })}
                 </div>
