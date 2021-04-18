@@ -5,13 +5,15 @@ import './chat.scss';
 function Chat() {
 
     const [chats, setChats] = useState([{message: 'Loading chat history...'}]);
-    const [newmessage, setNewMessage] = useState('');
+    const [inputMessage, setInputMessage] = useState('');
+    const [newmessage, setNewMessage] = useState([]);
     
-    const sendChat = (str) => {
-		dispatchChatEvent(str, "Visitor");
-		if(str.indexOf("hello") !== -1 || str.indexOf("hi") !== -1) {
+    const sendChat = () => {
+		dispatchChatEvent(inputMessage, "Visitor");
+        setNewMessage([...newmessage, inputMessage]);
+		if(inputMessage.indexOf("hello") !== -1 || inputMessage.indexOf("hi") !== -1) {
 			setTimeout(operatorGreetingChat, 2000);
-		} else if(str.indexOf("?") !== -1) {
+		} else if(inputMessage.indexOf("?") !== -1) {
 			setTimeout(operatorAnswerChat, 2000);
 		} else {
 			setTimeout(operatorChat, 2000);
@@ -47,11 +49,15 @@ function Chat() {
                         return <p key={i}> {chatLine.message} </p>
                     })}
                 </div>
-                <div id="liveChat"></div>
+                <div id="liveChat">
+                    {newmessage.map((liveChatLine, i) => {
+                        return <p key={i}> {liveChatLine} </p>
+                    })}
+                </div>
                 
             </div>
-            <textarea id="chatInput" placeholder='Type your question here...'></textarea>
-            <input id='chatSubmit' type="button" value='SEND'></input>
+            <textarea id="chatInput" placeholder='Type your question here...' onChange={(event) => {setInputMessage(event.target.value)}}></textarea>
+            <input id='chatSubmit' type="button" value='SEND' onClick={sendChat}></input>
         </div>
     )
 }

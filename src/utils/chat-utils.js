@@ -23,7 +23,7 @@
 		let event = new CustomEvent('chatreceived', {"detail":{datetime:new Date().toISOString(), message:msg, from:from}});
 
 		// Listen for the event
-		addListener('chatreceived', function (e) { console.log(event.detail) }, _events, false);
+		addListener('chatreceived', function (e) { console.log(event.detail.message, event.detail.from) }, _events, false);
 
 		// Dispatch the event.
 		raiseEvent("chatreceived", {"chat":{datetime:new Date().toISOString(), message:msg, from:from}}, _events);
