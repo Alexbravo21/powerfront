@@ -14,6 +14,7 @@ function Chat() {
     const [inputMessage, setInputMessage] = useState('');
     const [newMessage, setNewMessage] = useState([]);
     const [botMessage, setBotMessage] = useState('');
+    const [chatHidden, setChatHidden] = useState(true);
 
     const operatorChat = () => {
 		let randResponse = operators.responses[Math.floor(Math.random()*operators.responses.length)];
@@ -32,8 +33,8 @@ function Chat() {
 		let event = new CustomEvent('chatreceived', {"detail":{datetime:new Date().toISOString(), message:msg, from:from}});
 		// Listen for the event
 		addListener('chatreceived', (e) => {
-            if(e.chat.from === 'Visitor'){
-                setNewMessage([...newMessage, inputMessage]);
+            if(e.chat.from === 'visitor'){
+                setNewMessage([...newMessage, {message:inputMessage, from: 'visitor'}]);
             }else if(e.chat.from === 'operator'){
                 setBotMessage(e.chat.message);
             }
@@ -57,13 +58,13 @@ function Chat() {
 	}
 
     const showChatPanel = () => {
-        console.log('clickeado');
+        setChatHidden(!chatHidden);
     }
     
     const sendChat = () => {
         let inputMsg = inputMessage;
         setInputMessage('');
-		dispatchChatEvent(inputMsg, "Visitor");
+		dispatchChatEvent(inputMsg, "visitor");
 		if(inputMsg.indexOf("hello") !== -1 || inputMsg.indexOf("hi") !== -1) {
 			setTimeout(operatorGreetingChat, 2000);
 		} else if(inputMsg.indexOf("?") !== -1) {
@@ -76,13 +77,13 @@ function Chat() {
 		let d = new Date();
 		d.setTime(d.getTime()-200000);
         let history = []
-		history.push({datetime:new Date(d.setTime(d.getTime()+2000)).toISOString(), message:"hello", from:"Visitor"});
-		history.push({datetime:new Date(d.setTime(d.getTime()+4000)).toISOString(), message:"Hi, how can I help you?", from:"Operator"});
-		history.push({datetime:new Date(d.setTime(d.getTime()+4000)).toISOString(), message:"I'm looking for a size 7, but can't find it", from:"Visitor"});
-		history.push({datetime:new Date(d.setTime(d.getTime()+4000)).toISOString(), message:"Ok, one moment I'll check the stock", from:"Operator"})
-		history.push({datetime:new Date(d.setTime(d.getTime()+10000)).toISOString(), message:"I'm sorry, there is no sie 7 available in that colour. There are some in red and blue however", from:"Operator"})
-		history.push({datetime:new Date(d.setTime(d.getTime()+4000)).toISOString(), message:"Oh great, thank you", from:"Visitor"});
-		history.push({datetime:new Date(d.setTime(d.getTime()+4000)).toISOString(), message:"my pleasure :-)", from:"Operator"});
+		history.push({datetime:new Date(d.setTime(d.getTime()+2000)).toISOString(), message:"hello", from:"visitor"});
+		history.push({datetime:new Date(d.setTime(d.getTime()+4000)).toISOString(), message:"Hi, how can I help you?", from:"operator"});
+		history.push({datetime:new Date(d.setTime(d.getTime()+4000)).toISOString(), message:"I'm looking for a size 7, but can't find it", from:"visitor"});
+		history.push({datetime:new Date(d.setTime(d.getTime()+4000)).toISOString(), message:"Ok, one moment I'll check the stock", from:"operator"})
+		history.push({datetime:new Date(d.setTime(d.getTime()+10000)).toISOString(), message:"I'm sorry, there is no sie 7 available in that colour. There are some in red and blue however", from:"operator"})
+		history.push({datetime:new Date(d.setTime(d.getTime()+4000)).toISOString(), message:"Oh great, thank you", from:"visitor"});
+		history.push({datetime:new Date(d.setTime(d.getTime()+4000)).toISOString(), message:"my pleasure :-)", from:"operator"});
 			
         setTimeout(() => {
             setChats([...history]);
@@ -96,7 +97,7 @@ function Chat() {
     useEffect(() => {
         setNewMessage((oldArray) => {
             if(oldArray === newMessage){
-               return [...oldArray, botMessage];
+               return [...oldArray, {message: botMessage, from: 'operator'}];
             }else{
                 return [...oldArray];
             }
@@ -107,9 +108,10 @@ function Chat() {
     return (
         <>
         <img src={chatImage} alt={chatImageDescription} className="chat-image" onClick={showChatPanel} />
-        <div className="chat-window">
+        <div className={`chat-window chat-${chatHidden ? 'hidden' : 'shown'}`}>
             <div className="chat-title">
                 <h3>Botler (In training)</h3>
+                <div className="arrow" onClick={showChatPanel}></div>
             </div>
             <div id="chatHolder">
                 <div id="chatHistory">
@@ -119,7 +121,11 @@ function Chat() {
                 </div>
                 <div id="liveChat">
                     {newMessage.map((liveChatLine, i) => {
-                        return <p key={i}> {liveChatLine} </p>
+                        if(liveChatLine.message !== null && liveChatLine.message !== ''){
+                            return <div className={`container-${liveChatLine.from}`}><p key={i} className={liveChatLine.from}> {liveChatLine.message} </p></div>
+                        }else{
+                            return false;
+                        }
                     })}
                 </div>
                 
